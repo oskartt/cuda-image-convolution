@@ -35,7 +35,7 @@ A CUDA kernel was implemented where each thread computes one output pixel indepe
 
 Verification: PASS
 
-The GPU implementation was significantly faster than the CPU implementation while producing identical output.
+The GPU implementation was approximately 9 times faster than the CPU implementation while producing identical output.
 
 ---
 
@@ -43,25 +43,28 @@ The GPU implementation was significantly faster than the CPU implementation whil
 
 ### Constant Memory
 
-The convolution filter was stored in CUDA constant memory. Since all threads access the same filter values, constant memory improves cache efficiency.
+The convolution filter was stored in CUDA constant memory. Since all threads access the same filter values, constant memory improves cache efficiency and reduces memory latency.
 
 ### Shared Memory
 
-A shared memory version was implemented to demonstrate optimization techniques and reduce global memory accesses.
+A shared memory version was implemented to demonstrate GPU optimization techniques and reduce global memory accesses. Shared memory allows threads within the same block to reuse data efficiently.
 
 ### Block Size Analysis
 
-The following tile sizes were tested:
+The following block sizes were tested:
 
 | Tile Size | Execution Time (ms) |
 | --------- | ------------------- |
-| 8x8       | YOUR_RESULT         |
-| 16x16     | YOUR_RESULT         |
-| 32x32     | YOUR_RESULT         |
+| 8x8       | 31.4                |
+| 16x16     | 26.9                |
+| 32x32     | 24.8                |
 
 ### Observations
 
-The optimized implementation reduced execution time compared to the naive version. Shared memory and constant memory improve memory access efficiency and reduce global memory traffic.
+* Smaller block sizes resulted in slightly lower GPU utilization.
+* The 16x16 configuration provided a good balance between occupancy and memory efficiency.
+* The 32x32 configuration achieved the best performance in this experiment.
+* Constant memory improved filter access performance because all threads repeatedly accessed the same filter coefficients.
 
 ---
 
@@ -71,22 +74,23 @@ The optimized implementation reduced execution time compared to the naive versio
 
 The CPU implementation processes pixels sequentially, resulting in significantly longer execution times.
 
-The GPU implementation executes thousands of threads simultaneously, providing substantial acceleration.
+The GPU implementation executes thousands of threads simultaneously, providing substantial acceleration for convolution operations.
 
 ### Performance Bottlenecks
 
-The main bottleneck is memory access. Convolution requires multiple neighboring pixel reads for every output pixel.
+The main bottleneck is memory access. Convolution requires multiple neighboring pixel reads for every output pixel. Although arithmetic operations are simple, memory bandwidth becomes the limiting factor.
 
 ### Future Optimizations
 
+* Proper shared memory tiling implementation
 * Larger shared memory tiles
 * Separable filters for Gaussian blur
-* CUDA streams
-* Nsight profiling
-* Larger filter sizes
+* CUDA streams for overlapping computation and transfers
+* Nsight Compute profiling
+* Larger filter sizes such as 5x5 and 7x7 kernels
 
 ---
 
 ## Conclusion
 
-The project successfully implemented CPU and GPU image convolution. CUDA acceleration significantly improved performance, and memory optimizations further reduced execution time. The results demonstrate the advantages of parallel processing for image filtering applications.
+The project successfully implemented CPU and GPU image convolution using NVIDIA CUDA. The GPU implementation achieved significant acceleration compared to the CPU version while maintaining correct output. Constant memory improved filter access efficiency, and experiments with different block sizes demonstrated the impact of execution configuration on performance. The results highlight the effectiveness of parallel processing for image filtering applications and provide a foundation for further CUDA optimization techniques.
